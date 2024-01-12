@@ -122,7 +122,6 @@ function Write-Border {
     Write-Host $border -ForegroundColor $color
 }
 
-
 function Write-Separator {
     param (
         [string]$color = 'Yellow',
@@ -137,12 +136,16 @@ function Write-Separator {
 function Wait-Key {
     param(
         [int]$TimeoutInSeconds = 10,
-        [string]$Message = "Press 'Space' to pause or any other key to proceed immediately..."
+        [string]$Message = "Press 'Space' to pause or any other key to proceed immediately...",
+        [string]$TextColor = "Yellow",
+        [string]$info = ""
     )
 
-    Write-Host
-    Write-Host
-    Write-Host $Message -ForegroundColor Yellow
+    if ($info -ne "") {
+        Write-Host $info -ForegroundColor $TextColor
+    }
+
+    Write-Host $Message -ForegroundColor $TextColor
     $host.UI.RawUI.FlushInputBuffer()
     $startTime = Get-Date
     $totalTicks = 50
@@ -152,13 +155,14 @@ function Wait-Key {
         if ([console]::KeyAvailable) {
             $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
             if ($key.Character -eq ' ' -and -not $paused) {
-                Write-Host "`nPaused. Press any key to continue..." -ForegroundColor Yellow
+                Write-Host "`nPaused. Press any key to continue..." -ForegroundColor $TextColor
                 $paused = $true
                 $null = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
                 $startTime = Get-Date  # Reset timer
                 $i = 0  # Reset loop counter
-                Write-Host "`nResuming..." -ForegroundColor Yellow
-            } elseif ($paused) {
+                Write-Host "`nResuming..." -ForegroundColor $TextColor
+            } else {
+                # If any key other than space was pressed, break out of the loop.
                 break
             }
         }
@@ -168,12 +172,10 @@ function Wait-Key {
             $progressBar = "[" + "=" * $ticks + " " * ($totalTicks - $ticks) + "]"
             $secondsLeft = $TimeoutInSeconds - $i
             
-            Write-Host "`r$progressBar              $secondsLeft`s to skip" -NoNewLine -ForegroundColor Yellow
+            Write-Host "`r$progressBar              $secondsLeft`s to skip" -NoNewLine -ForegroundColor $TextColor
 
             Start-Sleep -Seconds 1
         }
     }
-    Write-Host "`n"
+    Write-Host "`n" -ForegroundColor $TextColor
 }
-
-Write-Title "Test"

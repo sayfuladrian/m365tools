@@ -1,5 +1,15 @@
-. ..\common\function.ps1
-. ..\common\interface.ps1
+. .\common\function.ps1
+. .\common\interface.ps1
+
+function Show-InfoSuccess {
+    param(
+        [string]$text = "[Module Here]",
+        [string]$color = "Green"
+    )
+
+    Wait-Key -info "The connection to $text has been established." -TextColor $color 
+    
+}
 
 #Get Azure AD Status 
 function Get-AADStatus {
@@ -8,7 +18,7 @@ function Get-AADStatus {
         $global:WarningPreference = "SilentlyContinue"
         $result = Get-AzureADUser -Top 1
         if ($result) {
-            Text-Green "You have connected to AzureAD"
+            Show-InfoSuccess -text "Azure AD"
         }
         $global:WarningPreference = "Continue"
     }
@@ -23,7 +33,7 @@ function Get-EXOStatus {
         $global:WarningPreference = "SilentlyContinue"
         $result = Get-Mailbox -ResultSize 1
         if ($result) {
-            Text-Green "You have connected to Exchange Online Management"
+            Show-InfoSuccess -text "Exchange Online Management"
         }
         $global:WarningPreference = "Continue"
     }
@@ -38,7 +48,7 @@ function Get-MSOStatus {
         try {
             # Check if MSOLService is connected
             Get-MsolDomain -ErrorAction Stop | Out-Null
-            Text-Green "You have connected to MSOnline Service"
+            Show-InfoSuccess -text "Microsoft Online Management(MSOLService)"
         } catch {
             if ($_.Exception.GetType().FullName -eq 'MicrosoftOnlineException') {
                 Text-Yellow "Please connect to MSOLService before running this script."
@@ -58,7 +68,7 @@ function Get-SECStatus {
         $global:WarningPreference = "SilentlyContinue"
         $result = Get-Label 
         if ($result) {
-            Text-Green "You have connected to IPPSSession"
+            Show-InfoSuccess -text "Exchange Online Protection/Security/Compliance"
         }
         $global:WarningPreference = "Continue"
     }
@@ -72,7 +82,7 @@ function Get-MGRStatus {
         try {
             $result = Get-MgUser -Top 1
             if ($result) {
-                Text-Green "You have connected to Microsoft Graph"
+                Show-InfoSuccess -text "Microsoft Graph"
             }
         } catch {
             # Check if the last error is an authentication error
