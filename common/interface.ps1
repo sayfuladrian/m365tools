@@ -118,9 +118,10 @@ function Write-Border {
     )
 
     $width = $Host.UI.RawUI.WindowSize.Width
-    $border = $borderChar * $width
+    $border = [string]$borderChar * $width
     Write-Host $border -ForegroundColor $color
 }
+
 
 function Write-Separator {
     param (
@@ -174,3 +175,5 @@ function Wait-Key {
     }
     Write-Host "`n"
 }
+
+Write-Title "Test"

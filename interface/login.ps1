@@ -1,10 +1,7 @@
-# Assuming that Text-Blue, Text-Red, and PrintTitleWithBorders are defined in interface.ps1
-# And assuming that the required login functions are defined in function.ps1
-
 # Import the module/script that contains the necessary functions
-. ..\common\function.ps1
-. ..\common\interface.ps1
-. ..\controller\login.ps1
+. .\common\function.ps1
+. .\common\interface.ps1
+. .\controller\login.ps1
 
 function Show-LoginPage {
     Clear-Host
@@ -57,5 +54,3 @@ function Show-LoginPage {
         }
     }
 }
-
-Show-LoginPage
