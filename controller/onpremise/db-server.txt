@@ -1,0 +1,5 @@
+name,type
+svr-ad19,DC
+svr-add19,DC
+svr-exch-19,EXC
+svr-adconnect,ADC

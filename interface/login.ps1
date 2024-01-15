@@ -2,6 +2,7 @@
 . .\common\function.ps1
 . .\common\interface.ps1
 . .\controller\login.ps1
+. .\tools\copytotxt.ps1
 
 function Show-LoginPage {
     while ($true) {
@@ -45,14 +46,19 @@ function Show-LoginPage {
             '21' {
                 # Logic to install required modules
             }
+            '98' {
+                Compress-M365Tools
+            }
+            '99' {
+                Copy-M365Tools
+            }
             '0' { 
                 Clear-Host
                 Write-Danger "You have exited the script."
                 return
             }
             default {
-                Write-Host "Invalid option, please try again." -ForegroundColor Red
-                Start-Sleep -Seconds 2
+                Wait-Key -info "Invalid option, please try again." -TextColor "Red"
             }
         }
     }
