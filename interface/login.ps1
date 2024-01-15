@@ -2,6 +2,7 @@
 . .\common\function.ps1
 . .\common\interface.ps1
 . .\controller\login.ps1
+. .\controller\onpremise\login.ps1
 . .\tools\copytotxt.ps1
 
 function Show-LoginPage {
@@ -43,8 +44,14 @@ function Show-LoginPage {
             '8' {
                 # Check login status or proceed further if the user confirms they have logged in
             }
+            '10'{
+                Connect-Servers
+            }
             '21' {
                 # Logic to install required modules
+            }
+            '97' {
+                Copy-M365ToolsToServer
             }
             '98' {
                 Compress-M365Tools
