@@ -42,24 +42,21 @@ function Connect-EMS {
         [string]$exchangeServer
     )
 
-    try {
-        # Replace with your actual Exchange Management Shell connection command
-        # For example, using implicit remoting
-        $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$exchangeServer/PowerShell/ -Authentication Kerberos
-        Import-PSSession $session
-        Write-Host $exchangeServer
+    $connectionSuccess = $false
+    while (-not $connectionSuccess) {
+        try {
+            # Replace with your actual Exchange Management Shell connection command
+            # For example, using implicit remoting
+            $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$exchangeServer/PowerShell/ -Authentication Kerberos
+            Import-PSSession $session
 
-        Write-Host "Connected to Exchange Management Shell on $exchangeServer."
-    } catch {
-        Write-Host "Failed to connect to Exchange Management Shell on $exchangeServer. Error: $($_.Exception.Message)"
-        $userChoice = Read-Host "Do you want to try another Exchange Server? (yes/no)"
-        if ($userChoice -eq "yes") {
-            return $true
+            Wait-Key -info "Connected to Exchange Management Shell on $exchangeServer." -TextColor "Green"
+            $connectionSuccess = $true
+        } catch {
+            Wait-Key -info "Failed to connect to Exchange Management Shell on $exchangeServer. Error: $($_.Exception.Message)" -TextColor "Red"
         }
     }
-
-    Wait-Key -TextColor "Red"
-    return $false
+    return $true
 }
 
 function Connect-Servers {
@@ -100,7 +97,6 @@ function Connect-Servers {
             }
         }
         '3' {
-
             Clear-Host
             Write-Title "Connecting to Exchange Management Powershell"
 
@@ -124,7 +120,6 @@ function Connect-Servers {
                 if ($userChoice -le $exchangeServers.Count -and $userChoice -ge 1) {
                     $selectedServer = $exchangeServers[$userChoice - 1].name
                     Connect-EMS -exchangeServer $selectedServer
-
                 } else {
                     Write-Separator "Red"
                     Text-Red "Invalid selection. Please enter a number between 1 and $($exchangeServers.Count)."
@@ -133,7 +128,7 @@ function Connect-Servers {
                 Write-Separator "Red"
                 Text-Red "Invalid selection. Please enter a valid number."
             }
-            
+    
             Write-Separator
             Wait-Key
         }

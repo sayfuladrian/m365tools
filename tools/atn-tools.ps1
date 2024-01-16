@@ -98,18 +98,55 @@ function Compress-M365Tools {
     }
 }
 
-function Copy-M365ToolsToServer {
+function Pull-M365Tools {
     param (
-        [string]$sourcePath = "E:\VisualStudio\github\m365tools\",
-        [string]$destinationPath = "\\172.16.10.24\m365tools\"
+        [string]$sourcePath = "\\172.16.10.24\m365tools$\",
+        [string]$destinationPath = "C:\m365tools\"
     )
+
+    Clear-Host
+    Write-Title "Download all files from SVR-JUMPHOST"
 
     # Ensure the source directory exists
     if (Test-Path -Path $sourcePath) {
-        # Ensure the destination directory exists; if not, create it
-        if (-not (Test-Path -Path $destinationPath)) {
-            New-Item -ItemType Directory -Path $destinationPath
+        # Check and create the destination directory if needed
+        Check-Folders -destinationSubDir $destinationPath
+
+        # Get all the files in the source directory
+        $files = Get-ChildItem -Path $sourcePath -Recurse -File | Where-Object { $_.FullName -notmatch '\\.git\\' }
+
+        # Copy each file individually
+        foreach ($file in $files) {
+            $relativePath = $file.FullName.Substring($sourcePath.Length)
+            $destinationFile = [System.IO.Path]::Combine($destinationPath, $relativePath)
+            $destinationDir = [System.IO.Path]::GetDirectoryName($destinationFile)
+
+            # Check and create the destination directory if needed
+            Check-Folders -destinationSubDir $destinationDir
+
+            # Copy the file using the Copy-File function
+            Copy-File -sourceFile $file.FullName -destinationFile $destinationFile
         }
+
+        Write-Host "All files downloaded successfully."
+    } else {
+        Write-Host "Source path does not exist."
+    }
+}
+
+function Push-M365Tools {
+    param (
+        [string]$sourcePath = "E:\VisualStudio\github\m365tools\",
+        [string]$destinationPath = "\\172.16.10.24\m365tools$\"
+    )
+
+    Clear-Host
+    Write-Title "Update all files in the SVR-JUMPHOST"
+
+    # Ensure the source directory exists
+    if (Test-Path -Path $sourcePath) {
+        # Check and create the destination directory if needed
+        Check-Folders -destinationSubDir $destinationPath
 
         # Get all the files in the source directory
         $files = Get-ChildItem -Path $sourcePath -Recurse -File
@@ -119,16 +156,11 @@ function Copy-M365ToolsToServer {
             $destinationFile = [System.IO.Path]::Combine($destinationPath, $file.FullName.Substring($sourcePath.Length))
             $destinationDir = [System.IO.Path]::GetDirectoryName($destinationFile)
 
-            # Ensure the destination directory exists
-            if (-not (Test-Path -Path $destinationDir)) {
-                New-Item -ItemType Directory -Path $destinationDir
-            }
+            # Check and create the destination directory if needed
+            Check-Folders -destinationSubDir $destinationDir
 
-            # Copy the file
-            Copy-Item -Path $file.FullName -Destination $destinationFile -Force
-
-            # Display progress
-            Write-Host "Copied: $($file.FullName) to $destinationFile"
+            # Copy the file using the Copy-File function
+            Copy-File -sourceFile $file.FullName -destinationFile $destinationFile
         }
 
         Write-Host "All files copied successfully."
