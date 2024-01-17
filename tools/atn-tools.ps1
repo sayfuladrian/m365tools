@@ -136,7 +136,7 @@ function Pull-M365Tools {
 
 function Push-M365Tools {
     param (
-        [string]$sourcePath = "E:\VisualStudio\github\m365tools\",
+        [string]$sourcePath = "D:\Visual Studio\github\m365tools\",
         [string]$destinationPath = "\\172.16.10.24\m365tools$\"
     )
 
@@ -166,5 +166,5 @@ function Push-M365Tools {
         Write-Host "All files copied successfully."
     } else {
         Write-Host "Source path does not exist."
-    }
+    }   
 }
