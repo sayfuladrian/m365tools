@@ -1,0 +1,2 @@
+index,oldou,newou
+1,"OU=users,DC=astratel,DC=co,DC=id","OU=azure ad users,OU=astratel,DC=co,DC=id"

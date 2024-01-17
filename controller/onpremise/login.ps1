@@ -42,27 +42,26 @@ function Connect-EMS {
         [string]$exchangeServer
     )
 
-    try {
-        # Replace with your actual Exchange Management Shell connection command
-        # For example, using implicit remoting
-        $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$exchangeServer/PowerShell/ -Authentication Kerberos
-        Import-PSSession $session
+    $connectionSuccess = $false
+    while (-not $connectionSuccess) {
+        try {
+            # Replace with your actual Exchange Management Shell connection command
+            # For example, using implicit remoting
+            $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$exchangeServer/PowerShell/ -Authentication Kerberos
+            Import-PSSession $session
 
-        Write-Host "Connected to Exchange Management Shell on $exchangeServer."
-    } catch {
-        Write-Host "Failed to connect to Exchange Management Shell on $exchangeServer. Error: $($_.Exception.Message)"
-        $userChoice = Read-Host "Do you want to try another Exchange Server? (yes/no)"
-        if ($userChoice -eq "yes") {
-            return $true
+            Wait-Key -info "Connected to Exchange Management Shell on $exchangeServer." -TextColor "Green"
+            $connectionSuccess = $true
+        } catch {
+            Wait-Key -info "Failed to connect to Exchange Management Shell on $exchangeServer. Error: $($_.Exception.Message)" -TextColor "Red"
         }
     }
-
-    return $false
+    return $true
 }
 
 function Connect-Servers {
     param(
-        [string]$filePath = "E:\VisualStudio\github\m365tools\controller\onpremise\db-server.txt"
+        [string]$filePath = ".\controller\onpremise\db-server.txt"
     )
 
     Write-Title "Establish Connection To Servers"
@@ -98,21 +97,40 @@ function Connect-Servers {
             }
         }
         '3' {
-            # Display a list of Exchange Servers and connect to the selected one
-            $exchangeServers = $servers | Where-Object {$_.type -eq 'EXC'}
+            Clear-Host
+            Write-Title "Connecting to Exchange Management Powershell"
+
+            $exchangeServers = @($servers | Where-Object {$_.type -eq 'EXC'})
+
+            Text-Blue "Number of servers: $($exchangeServers.Count)"
+
+            # Displaying the list of servers
             $index = 1
             foreach ($server in $exchangeServers) {
-                Write-Host "$index. $($server.name)"
+                Text-Green "$index. $($server.name)"
                 $index++
             }
 
             $userChoice = Read-Host "Select the Exchange Server number to connect to"
-            if ($userChoice -match '^\d+$' -and $userChoice -le $exchangeServers.Count -and $userChoice -gt 0) {
-                $selectedServer = $exchangeServers[$userChoice - 1].name
-                Connect-EMS -exchangeServer $selectedServer
+
+            # Validating and processing the user's choice
+            if ($userChoice -match '^\d+$') {
+                $userChoice = [int]$userChoice
+
+                if ($userChoice -le $exchangeServers.Count -and $userChoice -ge 1) {
+                    $selectedServer = $exchangeServers[$userChoice - 1].name
+                    Connect-EMS -exchangeServer $selectedServer
+                } else {
+                    Write-Separator "Red"
+                    Text-Red "Invalid selection. Please enter a number between 1 and $($exchangeServers.Count)."
+                }
             } else {
-                Write-Host "Invalid selection."
+                Write-Separator "Red"
+                Text-Red "Invalid selection. Please enter a valid number."
             }
+    
+            Write-Separator
+            Wait-Key
         }
         default {
             Write-Host "Invalid option selected."

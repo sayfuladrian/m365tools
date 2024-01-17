@@ -2,9 +2,15 @@
 . .\common\function.ps1
 . .\common\interface.ps1
 . .\controller\login.ps1
-. .\tools\copytotxt.ps1
+. .\controller\onpremise\login.ps1
+. .\controller\onpremise\migration.ps1
+. .\interface\onpremise\dashboard.ps1
+. .\tools\atn-tools.ps1
 
 function Show-LoginPage {
+
+    #State-Variables
+
     while ($true) {
         Clear-Host
         Write-Title "LET'S LOGIN BEFORE WE GO"
@@ -17,6 +23,9 @@ function Show-LoginPage {
         Write-Host "6. Login to All Services"
         Write-Host "7. Choose what you want to login"
         Text-Blue "8. I have logged in to what I want"
+        Write-Separator
+        Write-Host "10. Connect To Servers (Domain Controller, Exchange, AD Connect)"
+        Text-Blue "11. I have logged in to the server I want"
         Write-Separator
         Text-Yellow "21. Have not installed one of the module yet?"
         Write-Separator
@@ -43,8 +52,21 @@ function Show-LoginPage {
             '8' {
                 # Check login status or proceed further if the user confirms they have logged in
             }
+            '10'{
+                Connect-Servers
+            }
+            '11'{
+                Migration-Menu
+                Wait-Key
+            }
             '21' {
                 # Logic to install required modules
+            }
+            '96' {
+                Pull-M365Tools
+            }
+            '97' {
+                Push-M365Tools
             }
             '98' {
                 Compress-M365Tools
