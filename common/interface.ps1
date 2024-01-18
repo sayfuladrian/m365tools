@@ -50,7 +50,7 @@ function Get-Hostname {
 function Write-Title {
     param ([string]$Title)
 
-    clear
+   # clear
 
     $width = $Host.UI.RawUI.WindowSize.Width
 

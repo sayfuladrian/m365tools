@@ -25,6 +25,14 @@ function Connect-DC {
     )
 
     try {
+        [System.DirectoryServices.ActiveDirectory.Domain]::GetComputerDomain()
+    } catch {
+        
+        Set-Item WSMan:\localhost\Client\TrustedHosts -Value "$remoteComputer" -Force
+        $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+    }
+
+    try {
         Enter-PSSession -ComputerName $remoteComputer
     } catch {
         Write-Host "Failed to connect to $remoteComputer. Error: $($_.Exception.Message)"

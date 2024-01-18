@@ -4,11 +4,12 @@
 . .\controller\login.ps1
 . .\controller\onpremise\login.ps1
 . .\controller\onpremise\activedirectory.ps1
+. .\controller\onpremise\exchange.ps1
 . .\interface\onpremise\dashboard.ps1
 . .\tools\atn-tools.ps1
 
 function Show-LoginPage {
-
+    
     #State-Variables
 
     while ($true) {
@@ -57,7 +58,6 @@ function Show-LoginPage {
             }
             '11'{
                 Migration-Menu
-                Wait-Key
             }
             '21' {
                 # Logic to install required modules

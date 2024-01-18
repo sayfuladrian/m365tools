@@ -8,6 +8,7 @@ function Migration-Menu {
         [string]$filePath = ".\controller\onpremise\db-ou.txt"
     )
 
+    Clear-Host
     Write-Title "Welcome to the Migration Menu for ONPREMISE"
 
     Text-Cyan "1. Move OU from old OU to the NEW AZURE AD OU for Synchronization"
@@ -26,13 +27,17 @@ function Migration-Menu {
             Move-Users -domainForest $onpremiseDomain -domainEmail $emailDomain -oldOu $onpremiseOldOU -newOu $onpremiseNewOU
         }
         '2' {
-            
+            Set-AllExchangeUsers -domain $emailDomain
         }
         '3' {
             
         }
+        '6' {
+            Get-Guid
+            Wait-Key
+        }
         '10' { 
-            Return-Users -domainForest $onpremiseDomain -domainEmail $emailDomain -oldOu $onpremiseOldOU -newOu $onpremiseNewOU
+            Move-Users -domainForest $onpremiseDomain -domainEmail $emailDomain -oldOu $onpremiseNewOU -newOu $onpremiseOldOU
         }
         default {
             Write-Host "Invalid option selected."
