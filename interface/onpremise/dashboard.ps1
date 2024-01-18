@@ -31,6 +31,9 @@ function Migration-Menu {
         '3' {
             
         }
+        '10' { 
+            Return-Users -domainForest $onpremiseDomain -domainEmail $emailDomain -oldOu $onpremiseOldOU -newOu $onpremiseNewOU
+        }
         default {
             Write-Host "Invalid option selected."
         }

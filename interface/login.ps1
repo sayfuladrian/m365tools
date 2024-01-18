@@ -3,7 +3,7 @@
 . .\common\interface.ps1
 . .\controller\login.ps1
 . .\controller\onpremise\login.ps1
-. .\controller\onpremise\migration.ps1
+. .\controller\onpremise\activedirectory.ps1
 . .\interface\onpremise\dashboard.ps1
 . .\tools\atn-tools.ps1
 
