@@ -5,7 +5,10 @@ function Export-ADUsers {
     }
 
     $users = Get-ADUser -Filter * -Property DisplayName, UserPrincipalName, EmailAddress, DistinguishedName, ObjectGUID |
-             Select-Object DisplayName, UserPrincipalName, EmailAddress, @{Name="OrganizationalUnit";Expression={$_.DistinguishedName.split(",")[1].split("=")[1]}}, ObjectGUID
+             Select-Object DisplayName, UserPrincipalName, EmailAddress, 
+             @{Name="OrganizationalUnit";Expression={
+                 ($_.DistinguishedName -replace 'OU=', '' -replace 'CN=', '' -replace 'DC=', '') -split ',' -join '\'
+             }}, ObjectGUID
 
     $users | Export-Csv -Path "C:\Temporary\users.csv" -NoTypeInformation
 }
