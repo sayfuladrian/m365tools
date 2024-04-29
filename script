@@ -5,7 +5,8 @@ function Export-ADUsers {
     }
 
     $users = Get-ADUser -Filter * -Property DisplayName, UserPrincipalName, EmailAddress, DistinguishedName, ObjectGUID |
-             Select-Object DisplayName, UserPrincipalName, EmailAddress, DistinguishedName, ObjectGUID
+             Select-Object DisplayName, UserPrincipalName, EmailAddress, DistinguishedName, ObjectGUID,
+             @{Name="ImmutableID";Expression={[System.Convert]::ToBase64String((New-Object Guid($_.ObjectGUID)).ToByteArray())}}
 
     $users | Export-Csv -Path "C:\Temporary\users.csv" -NoTypeInformation
 }
