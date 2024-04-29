@@ -1,0 +1,12 @@
+function Export-ADUsers {
+    $folderPath = "C:\Temporary"
+    if (-not (Test-Path -Path $folderPath)) {
+        New-Item -Path $folderPath -ItemType Directory      
+    }
+
+    $users = Get-ADUser -Filter * -Property DisplayName, UserPrincipalName, EmailAddress, OrganizationalUnit, ObjectGUID |
+             Select-Object DisplayName, UserPrincipalName, EmailAddress, @{Name="OrganizationalUnit";Expression={$_.DistinguishedName.split(",")[1].split("=")[1]}}, ObjectGUID
+
+    $users | Export-Csv -Path "C:\Temporary\users.csv" -NoTypeInformation
+}
+  
